@@ -31,7 +31,7 @@ export const VERIFICATION_EMAIL_TEMPLATE = `<!DOCTYPE html>
                             <td align="left" style="padding: 20px; font-size: 14px; color: #555555;">
                                 <p>If you didn’t request this, please ignore this email.</p>
                                 <p>Best regards,</p>
-                                <p>GrihaKalp</p>
+                                <p>Nest Finders</p>
                                 <p style="text-align: center; font-size: 12px;">This is an automated message, please do not reply to this email</p>
                             </td>
                         </tr>
@@ -60,7 +60,7 @@ export const WELCOME_TEMPLATE = `<!DOCTYPE html>
                         <tr>
                             <td align="center"
                                 style="padding: 20px; background-color: #007bff; border-radius: 8px 8px 0 0; color: #ffffff; font-size: 24px; font-weight: bold;">
-                                Welcome to GrihaKalp!
+                                Welcome to Nest Finders!
                             </td>
                         </tr>
                         <tr>
@@ -82,7 +82,7 @@ export const WELCOME_TEMPLATE = `<!DOCTYPE html>
                             <td align="left" style="padding: 20px; font-size: 14px; color: #555555;">
                                 <p>Need help? Contact our support team anytime.</p>
                                 <p>Best regards,</p>
-                                <p>GrihaKalp</p>
+                                <p>Nest Finders</p>
                                 <p style="text-align: center; font-size: 12px;">This is an automated message, please do not reply to this email</p>
                             </td>
                         </tr>
@@ -134,7 +134,7 @@ export const RESET_PASSWORD_TEMPLATE = `<!DOCTYPE html>
                             <td align="left" style="padding: 20px; font-size: 14px; color: #555555;">
                                 <p>This link will expire in 1 hour for security reasons.</p>
                                 <p>Best regards,</p>
-                                <p>GrihaKalp</p>
+                                <p>Nest Finders</p>
                                 <p style="text-align: center; font-size: 12px;">This is an automated message, please do not reply to this email</p>
                             </td>
                         </tr>
@@ -177,7 +177,7 @@ export const RESET_PASSWORD_SUCCESSFUL_EMAIL = `<!DOCTYPE html>
                     </ul>
                     <p>Thank you for helping us keep your account secure.</p>
                     <p>Best regards,</p>
-                    <p><strong>GrihaKalp</strong></p>
+                    <p><strong>Nest Finders</strong></p>
                     <p style="text-align: center; font-size: 12px;">This is an automated message, please do not reply to this email</p>
                 </td>
             </tr>

@@ -9,6 +9,7 @@ const UserSchema = new mongoose.Schema(
     email: {
       type: String,
       required: true,
+      unique: true,
     },
     password: {
       type: String,
@@ -18,15 +19,21 @@ const UserSchema = new mongoose.Schema(
       type: String,
       default: "buyer",
     },
-    profilePic: {
+    profilePicUrl: {
+      type: String,
+      required: true,
+    },
+    profilePicId: {
       type: String,
       required: true,
     },
     isVerified: {
       type: Boolean,
       required: true,
-      default: false
+      default: false,
     },
+    favourites: [{ type: mongoose.Schema.Types.ObjectId }],
+
     resetPasswordToken: String,
     resetPasswordExpiresAt: Date,
     verificationToken: String,
