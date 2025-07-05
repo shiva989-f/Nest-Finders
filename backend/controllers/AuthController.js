@@ -35,7 +35,7 @@ export const Signup = async (req, res) => {
         });
       } else {
         existingUser.verificationToken = OTP;
-        existingUser.verificationTokenExpiresAt = Date.now() + 10 * 60 * 10000;
+        existingUser.verificationTokenExpiresAt = Date.now() + 10 * 60 * 1000;
         await existingUser.save();
         sendVerificationEmail(existingUser.email, OTP);
         return res.status(200).json({
@@ -48,8 +48,14 @@ export const Signup = async (req, res) => {
     }
 
     // If new user then upload user image in cloudinary
+    if (!req.file) {
+      return res.status(400).json({
+        message: "Profile picture is required!",
+        success: false,
+      });
+    }
     const upload = await uploadFile(req.file.path);
-    fs.unlinkSync(file.path); // Delete local file after upload
+    fs.unlinkSync(req.file.path); // Delete local file after upload
     if (!upload) {
       return res
         .status(500)

@@ -9,7 +9,9 @@ import {
   verifyEmail,
 } from "../controllers/AuthController.js";
 
-import {loginValidation, signupValidation,
+import {
+  loginValidation,
+  signupValidation,
 } from "../middleware/AuthValidation.js";
 import { verifyToken } from "../middleware/VerifyToken.js";
 import multer from "multer";
@@ -20,6 +22,8 @@ const uploader = multer({
   limits: { fileSize: 500000 },
 });
 
+// uploader.single is a multer middleware that handles single file uploads
+// 'file' is the name of the field in the form that contains the file
 authRouter.post("/signup", signupValidation, uploader.single("file"), Signup);
 authRouter.post("/verify-email", verifyEmail);
 authRouter.post("/login", loginValidation, login);

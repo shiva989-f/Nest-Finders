@@ -1,8 +1,12 @@
 import { useState } from "react";
 import { User, Mail, Lock, Upload } from "lucide-react";
+import { useAuthStore } from "../Store/authStore";
+import SubmitButton from "../Components/SubmitButton";
+import { errorMessage, successMessage } from "../Utils/HandleToast";
 
 const Signup = () => {
-  const [formData, setFormData] = useState({
+  const authStore = useAuthStore();
+  const [userData, setUserData] = useState({
     username: "",
     email: "",
     password: "",
@@ -12,12 +16,13 @@ const Signup = () => {
 
   const [imagePreview, setImagePreview] = useState(null);
 
+  // Handle image input
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
 
     if (type === "file") {
       const file = files[0];
-      setFormData((prev) => ({ ...prev, profileImage: file }));
+      setUserData((prev) => ({ ...prev, profileImage: file }));
 
       if (file) {
         const reader = new FileReader();
@@ -27,14 +32,37 @@ const Signup = () => {
         reader.readAsDataURL(file);
       }
     } else {
-      setFormData((prev) => ({ ...prev, [name]: value }));
+      setUserData((prev) => ({ ...prev, [name]: value }));
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
-    // Handle form submission here
+
+    if (
+      !userData.username ||
+      !userData.email ||
+      !userData.password ||
+      !userData.profileImage ||
+      !userData.role
+    ) {
+      return errorMessage("All fields required!");
+    }
+
+    const formData = new FormData();
+    // Append the actual file (profileImage) - important!
+    if (userData.profileImage) {
+      formData.append("file", userData.profileImage);
+    }
+
+    // Append other fields except profileImage
+    Object.keys(userData).forEach((key) => {
+      if (key !== "profileImage") {
+        formData.append(key, userData[key]);
+      }
+    });
+
+    await authStore.signup(formData);
   };
 
   return (
@@ -118,7 +146,7 @@ const Signup = () => {
                   <input
                     type="text"
                     name="username"
-                    value={formData.username}
+                    value={userData.username}
                     onChange={handleChange}
                     required
                     placeholder="Enter your username"
@@ -137,7 +165,7 @@ const Signup = () => {
                   <input
                     type="email"
                     name="email"
-                    value={formData.email}
+                    value={userData.email}
                     onChange={handleChange}
                     required
                     placeholder="Enter your email"
@@ -156,7 +184,7 @@ const Signup = () => {
                   <input
                     type="password"
                     name="password"
-                    value={formData.password}
+                    value={userData.password}
                     onChange={handleChange}
                     required
                     placeholder="Create a password"
@@ -172,7 +200,7 @@ const Signup = () => {
                 </label>
                 <select
                   name="role"
-                  value={formData.role}
+                  value={userData.role}
                   onChange={handleChange}
                   required
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-black bg-white"
@@ -184,13 +212,11 @@ const Signup = () => {
               </div>
 
               {/* Submit Button */}
-              <button
-                type="button"
-                onClick={handleSubmit}
-                className="w-full bg-gray-800 text-white py-3 px-4 rounded-lg font-semibold hover:bg-gray-900 transform hover:scale-105 transition-all duration-200 shadow-lg"
-              >
-                Register
-              </button>
+              <SubmitButton
+                handleOnClick={handleSubmit}
+                isLoading={authStore.isLoading}
+                text={"Register"}
+              />
 
               {/* Login Link */}
               <p className="text-center text-sm text-gray-600">
