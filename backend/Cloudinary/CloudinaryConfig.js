@@ -11,7 +11,6 @@ cloudinary.config({
 export const uploadFile = async (filePath) => {
   try {
     const result = await cloudinary.uploader.upload(filePath);
-    console.log(result);
     return result;
   } catch (error) {
     throw new Error("Error while uploading image to the server!");

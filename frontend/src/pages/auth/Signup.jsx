@@ -1,11 +1,13 @@
 import { useState } from "react";
-import { User, Mail, Lock, Upload } from "lucide-react";
-import { useAuthStore } from "../Store/authStore";
-import SubmitButton from "../Components/SubmitButton";
-import { errorMessage, successMessage } from "../Utils/HandleToast";
+import { User, Mail, Lock, Upload, EyeClosed, Eye } from "lucide-react";
+import { useAuthStore } from "../../Store/authStore";
+import Button from "../../Components/Button";
+import { errorMessage, successMessage } from "../../Utils/HandleToast";
+import { useNavigate } from "react-router-dom";
 
 const Signup = () => {
   const authStore = useAuthStore();
+  const navigate = useNavigate();
   const [userData, setUserData] = useState({
     username: "",
     email: "",
@@ -15,6 +17,7 @@ const Signup = () => {
   });
 
   const [imagePreview, setImagePreview] = useState(null);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   // Handle image input
   const handleChange = (e) => {
@@ -62,11 +65,20 @@ const Signup = () => {
       }
     });
 
-    await authStore.signup(formData);
+    const result = await authStore.signup(formData);
+    if (result.success || result.user) {
+      navigate("/verify-email", {
+        state: { email: userData.email },
+      });
+    }
+  };
+
+  const handlePasswordVisiblity = () => {
+    setIsPasswordVisible((prev) => !prev);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 to-teal-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-purple-100 via-pink-50 to-blue-100 flex items-center justify-center p-4">
       <div className="bg-white rounded-3xl shadow-2xl overflow-hidden w-full flex flex-col lg:flex-row min-h-[600px]">
         {/* Left Side - Modern House Image */}
         <div className="lg:w-1/2 relative min-h-[300px] lg:min-h-full">
@@ -77,9 +89,9 @@ const Signup = () => {
             alt="Modern House"
             className="w-full h-full object-cover "
           />
-          <div className="absolute bottom-8 left-8 right-8">
+          <div className="absolute bottom-8 left-8 right-8 hidden sm:block">
             <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 shadow-lg">
-              <h3 className="text-xl font-bold text-gray-900 mb-2">
+              <h3 className="text-xl font-nunito-bold text-gray-900 mb-2">
                 Find Your Dream Home
               </h3>
               <p className="text-gray-600">
@@ -95,11 +107,11 @@ const Signup = () => {
           <div className="w-full max-w-md">
             {/* Header */}
             <div className="text-center mb-8">
-              <div className="inline-flex items-center justify-center w-60 md:w-80 rounded-full mb-4">
+              <div className="inline-flex items-center justify-center w-30 md:w-40 rounded-full mb-4">
                 {/* <Home className="w-8 h-8 text-white" /> */}
-                <img src="/logo.svg" alt="" />
+                <img src="/images/logo.png" alt="" />
               </div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              <h1 className="text-3xl font-nunito-bold text-gray-900 mb-2">
                 Join Us Today
               </h1>
               <p className="text-gray-600">
@@ -150,7 +162,7 @@ const Signup = () => {
                     onChange={handleChange}
                     required
                     placeholder="Enter your username"
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-black"
+                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-200 text-black"
                   />
                 </div>
               </div>
@@ -169,7 +181,7 @@ const Signup = () => {
                     onChange={handleChange}
                     required
                     placeholder="Enter your email"
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-black"
+                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-200 text-black"
                   />
                 </div>
               </div>
@@ -182,14 +194,25 @@ const Signup = () => {
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
                   <input
-                    type="password"
+                    type={`${isPasswordVisible ? "text" : "password"}`}
                     name="password"
                     value={userData.password}
                     onChange={handleChange}
                     required
                     placeholder="Create a password"
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-black"
+                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-200 text-black"
                   />
+                  {isPasswordVisible ? (
+                    <EyeClosed
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"
+                      onClick={handlePasswordVisiblity}
+                    />
+                  ) : (
+                    <Eye
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"
+                      onClick={handlePasswordVisiblity}
+                    />
+                  )}
                 </div>
               </div>
 
@@ -203,7 +226,7 @@ const Signup = () => {
                   value={userData.role}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-black bg-white"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-200 text-black bg-white"
                 >
                   <option value="">Choose your role</option>
                   <option value="buyer">🏠 Property Buyer</option>
@@ -212,9 +235,11 @@ const Signup = () => {
               </div>
 
               {/* Submit Button */}
-              <SubmitButton
+              <Button
                 handleOnClick={handleSubmit}
-                isLoading={authStore.isLoading}
+                isDisabled={authStore.isLoading}
+                isVerifying={authStore.isLoading}
+                textDisabled={"Registering..."}
                 text={"Register"}
               />
 
@@ -222,10 +247,10 @@ const Signup = () => {
               <p className="text-center text-sm text-gray-600">
                 Already have an account?{" "}
                 <a
-                  href="#"
+                  href="/login"
                   className="text-blue-600 hover:text-blue-800 font-medium transition-colors duration-200"
                 >
-                  Sign in here
+                  Login in here
                 </a>
               </p>
             </form>

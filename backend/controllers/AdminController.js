@@ -14,7 +14,7 @@ export const showAllUsers = async (req, res) => {
     const users = await User.find({
       _id: { $ne: user.userId }, // Exclude self
       role: { $in: ["buyer", "seller"] }, // Includes only buyer and seller
-    });
+    }).select("-password");
     if (!users)
       return res
         .status(404)
@@ -106,7 +106,7 @@ export const deleteProperty = async (req, res) => {
       await deleteImage(image.public_id);
     }
 
-    await property.deleteOne()
+    await property.deleteOne();
 
     res
       .status(200)

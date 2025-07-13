@@ -19,7 +19,7 @@ const authRouter = express.Router();
 
 const uploader = multer({
   storage: multer.diskStorage({}), // diskStorage is empty so it doesn't store image in any folder, we are just getting the file in backend
-  limits: { fileSize: 500000 },
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB
 });
 
 // uploader.single is a multer middleware that handles single file uploads

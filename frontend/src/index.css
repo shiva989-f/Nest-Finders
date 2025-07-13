@@ -7,3 +7,25 @@ html {
 html::-webkit-scrollbar {
   display: none;
 }
+
+img {
+  user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
+}
+
+/* Note: To use google fonts add import in the top of file and add font name in theme block this is new method for custom below is method used */
+@font-face {
+  font-family: nunito;
+  src: url(../public/fonts/nunito.TTF);
+}
+
+@font-face {
+  font-family: nunito-bold;
+  src: url(../public/fonts/nunito_bold.TTF);
+}
+
+@theme {
+  --font-nunito: nunito;
+  --font-nunito-bold: nunito-bold;
+}

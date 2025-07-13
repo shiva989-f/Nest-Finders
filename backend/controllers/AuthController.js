@@ -7,7 +7,7 @@ import {
   sendVerificationEmail,
   sendWelcomeEmail,
 } from "../nodemailer/Email.js";
-import { generateJwtSetCookie } from "../utils/generateJWTandSetInCookie.js";
+import { generateJwtSetCookie } from "../utils/generateTokenSetCookies.js";
 import { uploadFile } from "../Cloudinary/CloudinaryConfig.js";
 import fs from "fs";
 
@@ -80,7 +80,6 @@ export const Signup = async (req, res) => {
       success: true,
     });
   } catch (error) {
-    console.error("Signup Error:", error); // Add this
     res.status(500).json({
       message: "Something went wrong",
       error: error.message, // Return readable message
@@ -139,7 +138,7 @@ export const login = async (req, res) => {
     if (!user) {
       return res
         .status(404)
-        .json({ message: "User not exist, Please login!", success: false });
+        .json({ message: "Email not found!", success: false });
     }
 
     if (user) {
