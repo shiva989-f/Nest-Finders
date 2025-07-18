@@ -20,6 +20,20 @@ export const useAdminStore = create((set) => ({
     }
   },
 
+  deleteUser: async (userId) => {
+    set({ isLoading: true });
+    try {
+      const response = await axios.get(
+        `${API_URL}/admin/delete-user/${userId}`
+      );
+      set({ isLoading: false });
+      successMessage(response.data.message);
+    } catch (error) {
+      set({ isLoading: false });
+      errorMessage("Failed to delete user");
+    }
+  },
+
   fetchProperties: async () => {
     set({ isLoading: true });
     try {
@@ -30,19 +44,17 @@ export const useAdminStore = create((set) => ({
     }
   },
 
-  deleteUser: async (userId) => {
+  deleteProperty: async (propertyId) => {
     set({ isLoading: true });
-    console.log(userId);
-
     try {
       const response = await axios.get(
-        `${API_URL}/admin/delete-user/${userId}`
+        `${API_URL}/admin/delete-property/${propertyId}`
       );
       set({ isLoading: false });
-      successMessage("User deleted");
+      successMessage(response.data.message);
     } catch (error) {
       set({ isLoading: false });
-      errorMessage("Failed to delete user");
+      errorMessage("Failed to delete property");
     }
   },
 }));

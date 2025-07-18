@@ -1,35 +1,40 @@
 import { useEffect, useState } from "react";
-import { Users, Search, Filter, RefreshCw } from "lucide-react";
 import { useAdminStore } from "../../Store/AdminStore";
-import UserCard from "./UserCard";
+import { Filter, House, RefreshCw, Search } from "lucide-react";
+import AdminPropertyCard from "./AdminPropertyCard";
 
-const UsersTab = () => {
-  const { fetchUsers, users } = useAdminStore();
+const PropertiesTab = () => {
+  const { fetchProperties, properties, deleteProperty, isLoading } =
+    useAdminStore();
   const [searchTerm, setSearchTerm] = useState("");
-  const [filterRole, setFilterRole] = useState("all");
+  const [filterFurnishedStatus, setFilterFurnishedStatus] = useState("all"); //("Furnished", "Semi-Furnished", "Unfurnished")
+  const [filterType, setFilterType] = useState("all"); // ("Apartment", "House", "Villa", "Plot", "Commercial")
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [loading, setLoading] = useState(false);
-
   useEffect(() => {
-    setLoading(true);
-    fetchUsers();
-    setLoading(false);
+    fetchProperties();
   }, []);
 
   const handleRefresh = async () => {
     setIsRefreshing(true);
-    await fetchUsers();
+    await fetchProperties();
     setIsRefreshing(false);
   };
 
-  // Filtered users or Empty Array
-  const filteredUsers = Array.isArray(users)
-    ? users.filter((user) => {
+  const filteredProperties = Array.isArray(properties)
+    ? properties.filter((property) => {
         const matchesSearch =
-          user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          user.email.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesRole = filterRole === "all" || user.role === filterRole;
-        return matchesSearch && matchesRole;
+          property.title.toLowerCase().includes(searchTerm) ||
+          property.location.address.toLowerCase().includes(searchTerm) ||
+          property.location.city.toLowerCase().includes(searchTerm) ||
+          property.location.state.toLowerCase().includes(searchTerm) ||
+          property.description.toLowerCase().includes(searchTerm);
+
+        const matchesFurnishedStatus =
+          filterFurnishedStatus === "all" ||
+          property.furnishedStatus === filterFurnishedStatus;
+        const matchesFilterType =
+          filterType === "all" || property.propertyType === filterType;
+        return matchesSearch && matchesFurnishedStatus && matchesFilterType;
       })
     : [];
 
@@ -61,21 +66,24 @@ const UsersTab = () => {
   const EmptyState = () => (
     <div className="col-span-full flex flex-col items-center justify-center py-20 px-4">
       <div className="w-24 h-24 bg-gradient-to-br from-purple-100 to-pink-100 rounded-full flex items-center justify-center mb-6">
-        <Users className="w-12 h-12 text-purple-400" />
+        <House className="w-12 h-12 text-purple-400" />
       </div>
       <h3 className="text-2xl font-nunito-bold text-gray-700 mb-2">
-        No Users Found
+        No Properties Found
       </h3>
       <p className="text-gray-500 text-center max-w-md">
-        {searchTerm || filterRole !== "all"
+        {searchTerm || filterFurnishedStatus !== "all" || filterType !== "all"
           ? "Try adjusting your search or filter criteria"
-          : "No users have been added to the system yet"}
+          : "No Properties have been added to the system yet"}
       </p>
-      {(searchTerm || filterRole !== "all") && (
+      {(searchTerm ||
+        filterFurnishedStatus !== "all" ||
+        filterType !== "all") && (
         <button
           onClick={() => {
             setSearchTerm("");
-            setFilterRole("all");
+            setFilterType("all");
+            setFilterFurnishedStatus("all");
           }}
           className="mt-4 px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors duration-200"
         >
@@ -91,17 +99,19 @@ const UsersTab = () => {
       <div className="mb-8">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-lg">
-              <Users className="w-6 h-6 text-blue-600" />
+            <div className="w-12 h-12 bg-white flex items-center justify-center rounded-xl shadow-lg">
+              <House className="w-6 h-6 text-purple-600" />
             </div>
             <div>
-              <h1 className="text-2xl font-nunito-bold">User Management</h1>
+              <h1 className="text-2xl font-nunito-bold">
+                Properties Management
+              </h1>
               <p className="text-gray-600 text-sm sm:text-base">
-                Manage and monitor all platform users
+                Manage and monitor all platform properties
               </p>
             </div>
           </div>
-
+          {/* Refresh button */}
           <button
             onClick={handleRefresh}
             disabled={isRefreshing}
@@ -116,29 +126,48 @@ const UsersTab = () => {
           </button>
         </div>
 
-        {/* Search and Filter Bar */}
-        <div className="flex flex-col sm:flex-row gap-4 mb-6">
+        {/* Search and Filter bars */}
+        <div className="flex flex-col md:flex-row gap-4 mb-6">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 z-10 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
             <input
               type="text"
-              placeholder="Search users by name or email..."
+              placeholder="Search by title, location or desc..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-12 pr-4 py-3 bg-white/80 backdrop-blur-sm border border-purple-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 placeholder-gray-500"
             />
           </div>
 
+          {/* Filter for furnished status  */}
           <div className="relative">
             <Filter className="absolute left-3 top-1/2 z-10 -translate-y-1/2 w-5 h-5 text-black-400" />
             <select
-              value={filterRole}
-              onChange={(e) => setFilterRole(e.target.value)}
+              value={filterFurnishedStatus}
+              onChange={(e) => setFilterFurnishedStatus(e.target.value)}
               className="pl-12 pr-8 py-3 bg-white/80 backdrop-blur-sm border border-purple-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 cursor-pointer min-w-[140px]"
             >
-              <option value="all">All Roles</option>
-              <option value="seller">Seller</option>
-              <option value="buyer">Buyer</option>
+              <option value="all">All Furnished Status</option>
+              <option value="Furnished">Furnished</option>
+              <option value="Semi-Furnished">Semi-Furnished</option>
+              <option value="Unfurnished">Unfurnished</option>
+            </select>
+          </div>
+
+          {/* Filter for type  */}
+          <div className="relative">
+            <Filter className="absolute left-3 top-1/2 z-10 -translate-y-1/2 w-5 h-5 text-black-400" />
+            <select
+              value={filterType}
+              onChange={(e) => setFilterType(e.target.value)}
+              className="pl-12 pr-8 py-3 bg-white/80 backdrop-blur-sm border border-purple-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200 cursor-pointer min-w-[140px]"
+            >
+              <option value="all">All Type</option>
+              <option value="Apartment">Apartment</option>
+              <option value="House">House</option>
+              <option value="Villa">Villa</option>
+              <option value="Plot">Plot</option>
+              <option value="Commercial">Commercial</option>
             </select>
           </div>
         </div>
@@ -148,27 +177,27 @@ const UsersTab = () => {
           <div className="flex items-center gap-2 px-4 py-2 bg-white/60 backdrop-blur-sm rounded-lg border border-purple-100">
             <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
             <span className="text-sm font-medium text-gray-700">
-              Total: {Array.isArray(users) ? users.length : 0}
+              Total: {Array.isArray(properties) ? properties.length : 0}
             </span>
           </div>
           <div className="flex items-center gap-2 px-4 py-2 bg-white/60 backdrop-blur-sm rounded-lg border border-purple-100">
             <div className="w-3 h-3 bg-green-500 rounded-full"></div>
             <span className="text-sm font-medium text-gray-700">
-              Showing: {filteredUsers.length}
+              Showing: {filteredProperties.length}
             </span>
           </div>
         </div>
       </div>
 
       {/* Content Area */}
-      <div className="bg-white/40 backdrop-blur-sm rounded-2xl border border-purple-100 p-4 sm:p-6 shadow-xl">
-        {loading ? (
+      <div className="bg-white/40 backdrop-blur-sm rounded-xl border border-purple-100 p-4 sm:p-6 shadow-xl">
+        {isLoading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             <LoadingSkeleton />
           </div>
-        ) : filteredUsers.length > 0 ? (
+        ) : filteredProperties.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5 gap-6">
-            {filteredUsers.map((user, idx) => (
+            {filteredProperties.map((property, idx) => (
               <div
                 key={idx}
                 className="opacity-0 animate-fadeIn"
@@ -177,13 +206,16 @@ const UsersTab = () => {
                   animationFillMode: "forwards",
                 }}
               >
-                <UserCard
-                  userId={user._id}
-                  username={user.username}
-                  email={user.email}
-                  profilePicUrl={user.profilePicUrl}
-                  role={user.role}
-                  isVerified={user.isVerified}
+                <AdminPropertyCard
+                  propertyId={property._id}
+                  image={property.images[0]?.imageUrl || "/images/logo.png"}
+                  title={property.title}
+                  description={property.description}
+                  price={property.price}
+                  location={property.location}
+                  favorites={property.favourites}
+                  onDelete={deleteProperty}
+                  isLoading
                 />
               </div>
             ))}
@@ -192,7 +224,6 @@ const UsersTab = () => {
           <EmptyState />
         )}
       </div>
-
       {/* Custom Animation Styles */}
       <style>{`
         @keyframes fadeIn {
@@ -214,4 +245,4 @@ const UsersTab = () => {
   );
 };
 
-export default UsersTab;
+export default PropertiesTab;

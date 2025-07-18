@@ -10,6 +10,7 @@ import ForgotPassword from "./pages/auth/ForgotPassword";
 import ResetPassword from "./pages/auth/ResetPassword";
 import Admin from "./pages/admin/Admin";
 import PageNotFound from "./pages/PageNotFound";
+import Seller from "./pages/seller/Seller";
 
 // Protected routes
 const ProtectedRoute = ({ children }) => {
@@ -40,6 +41,21 @@ const IsUserNotAdmin = ({ children }) => {
   }
 
   if (user.role !== "admin") {
+    return <Navigate to="/" replace />;
+  }
+
+  return children;
+};
+
+// Only Admin Route
+const IsUserNotSeller = ({ children }) => {
+  const { isAuthenticated, user } = useAuthStore();
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (user.role !== "seller") {
     return <Navigate to="/" replace />;
   }
 
@@ -109,6 +125,15 @@ const App = () => {
             <IsUserNotAdmin>
               <Admin />
             </IsUserNotAdmin>
+          }
+        />
+
+        <Route
+          path="/seller"
+          element={
+            <IsUserNotSeller>
+              <Seller />
+            </IsUserNotSeller>
           }
         />
 

@@ -1,42 +1,40 @@
 import { useState } from "react";
 import {
-  Users,
-  Home,
   Bell,
   Menu,
   X,
   Crown,
   Shield,
   ChevronDown,
+  HousePlus,
+  LayoutList,
+  Store,
 } from "lucide-react";
-import UsersTab from "../../Components/admin/UsersTab";
 import { useAuthStore } from "../../Store/authStore";
-import { useAdminStore } from "../../Store/AdminStore";
 import { useNavigate } from "react-router-dom";
 import PropertiesTab from "../../Components/admin/PropertiesTab";
+import PropertyListingForm from "../../Components/seller/PropertyListingForm";
 
-const Admin = () => {
+const Seller = () => {
   const { user, logout } = useAuthStore();
-  const [isUserTabSelected, setIsUserTabSelected] = useState(true);
+  const [isAddTabSelected, setIsAddTabSelected] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
-  const { users, properties } = useAdminStore();
   const navigate = useNavigate();
 
   const tabs = [
     {
-      id: "users",
-      label: "Users",
-      icon: Users,
-      count: users.length,
+      id: "addProperty",
+      label: "Add Property",
+      icon: HousePlus,
       color: "from-blue-500 to-blue-600",
     },
     {
-      id: "properties",
-      label: "Properties",
-      icon: Home,
-      count: properties.length,
+      id: "myProperties",
+      label: "My Properties",
+      icon: LayoutList,
+      // count: properties.length,
       color: "from-purple-500 to-purple-600",
     },
   ];
@@ -81,9 +79,9 @@ const Admin = () => {
             <div className="flex items-center justify-between p-6 bg-gradient-to-r from-purple-600 to-blue-600 text-white">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
-                  <Crown className="w-5 h-5" />
+                  <Store className="w-5 h-5" />
                 </div>
-                <span className="font-nunito-bold text-lg">Admin Panel</span>
+                <span className="font-nunito-bold text-lg">Seller Panel</span>
               </div>
               <button
                 onClick={() => setSidebarOpen(false)}
@@ -99,30 +97,18 @@ const Admin = () => {
                 <button
                   key={tab.id}
                   onClick={() => {
-                    setIsUserTabSelected(tab.id === "users");
+                    setIsAddTabSelected(tab.id === "addProperty");
                     setSidebarOpen(false);
                   }}
                   className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all duration-200 group ${
-                    (tab.id === "users" && isUserTabSelected) ||
-                    (tab.id === "properties" && !isUserTabSelected)
+                    (tab.id === "addProperty" && isAddTabSelected) ||
+                    (tab.id === "myProperties" && !isAddTabSelected)
                       ? `bg-gradient-to-r ${tab.color} text-white shadow-lg`
                       : "hover:bg-gray-100 text-gray-700 hover:text-gray-900"
                   }`}
                 >
                   <tab.icon className="w-5 h-5" />
                   <span className="font-medium">{tab.label}</span>
-                  <div className="ml-auto">
-                    <span
-                      className={`text-xs px-2 py-1 rounded-full ${
-                        (tab.id === "users" && isUserTabSelected) ||
-                        (tab.id === "properties" && !isUserTabSelected)
-                          ? "bg-white/20 text-white"
-                          : "bg-gray-200 text-gray-600 group-hover:bg-gray-300"
-                      }`}
-                    >
-                      {tab.count}
-                    </span>
-                  </div>
                 </button>
               ))}
             </nav>
@@ -250,7 +236,7 @@ const Admin = () => {
           <main className="flex-1 overflow-auto">
             {/* Tab content */}
             <div className="p-4 lg:p-6">
-              {isUserTabSelected ? <UsersTab /> : <PropertiesTab />}
+              {isAddTabSelected ? <PropertyListingForm /> : <PropertiesTab />}
             </div>
           </main>
         </div>
@@ -259,4 +245,4 @@ const Admin = () => {
   );
 };
 
-export default Admin;
+export default Seller;

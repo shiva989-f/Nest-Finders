@@ -105,7 +105,7 @@ export const deleteProperty = async (req, res) => {
     for (const image of property.images) {
       await deleteImage(image.public_id);
     }
-
+    
     await property.deleteOne();
 
     res

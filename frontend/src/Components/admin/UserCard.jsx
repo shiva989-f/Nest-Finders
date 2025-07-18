@@ -1,5 +1,4 @@
 import { Trash2, Shield, Mail, User } from "lucide-react";
-import { useState } from "react";
 import { useAdminStore } from "../../Store/AdminStore";
 
 const UserCard = ({
@@ -11,7 +10,6 @@ const UserCard = ({
   role,
 }) => {
   const { deleteUser } = useAdminStore();
-  const [isHovered, setIsHovered] = useState(false);
 
   const getRoleColor = (role) => {
     switch (role?.toLowerCase()) {
@@ -35,21 +33,12 @@ const UserCard = ({
     }
   };
 
-  const handleDeleteUser = (userId) => {
-    console.log(userId);
-
+  const handleDeleteUser = () => {
     deleteUser(userId);
   };
 
   return (
-    <div
-      className="relative group bg-gradient-to-br from-white via-white to-gray-50 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 p-6 m-2 border border-gray-100 hover:border-gray-200 transform hover:-translate-y-1"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      {/* Background decoration */}
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-50/20 via-purple-50/20 to-pink-50/20 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
+    <div className="relative group bg-gradient-to-br from-white via-white to-gray-50 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 p-6 m-2 border border-gray-100 hover:border-gray-200 transform hover:-translate-y-1">
       {/* Profile section */}
       <div className="relative flex flex-col items-center mb-6">
         <div className="relative">
@@ -66,7 +55,7 @@ const UserCard = ({
         </div>
 
         {/* Username with gradient */}
-        <h3 className="mt-4 text-xl font-bold bg-gradient-to-r from-gray-700 to-gray-900 bg-clip-text text-transparent">
+        <h3 className="mt-4 text-xl font-nunito-bold bg-gradient-to-r from-gray-700 to-gray-900 bg-clip-text text-transparent">
           {username}
         </h3>
 
@@ -111,7 +100,7 @@ const UserCard = ({
       {/* Action button */}
       <button
         className="w-full bg-gradient-to-r from-red-500 via-red-600 to-red-700 text-white py-3 px-6 rounded-xl font-semibold hover:from-red-600 hover:via-red-700 hover:to-red-800 transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 group/btn"
-        onClick={handleDeleteUser(userId)}
+        onClick={handleDeleteUser}
       >
         <Trash2 className="w-5 h-5 group-hover/btn:animate-pulse" />
         <span>Delete User</span>
@@ -121,11 +110,6 @@ const UserCard = ({
       </button>
 
       {/* Hover glow effect */}
-      <div
-        className={`absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-400/20 via-purple-400/20 to-pink-400/20 opacity-0 blur-xl transition-opacity duration-500 -z-10 ${
-          isHovered ? "opacity-100" : ""
-        }`}
-      />
     </div>
   );
 };

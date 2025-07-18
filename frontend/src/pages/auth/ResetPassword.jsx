@@ -49,7 +49,7 @@ const ResetPassword = () => {
               <img src="/images/logo.png" />
             </div>
             <div>
-              <h1 className="text-white text-xl font-bold font-nunito-bold">
+              <h1 className="text-white text-xl font-nunito-bold font-nunito-bold">
                 NEST FINDERS
               </h1>
               <p className="text-white/80 text-xs">Premium Real Estate</p>
@@ -64,7 +64,7 @@ const ResetPassword = () => {
             <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full mb-4 shadow-lg">
               <Lock className="w-8 h-8 text-white" />
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            <h2 className="text-2xl font-nunito-bold text-gray-900 mb-2">
               Reset Password
             </h2>
             <p className="text-gray-600">Enter your new password</p>
