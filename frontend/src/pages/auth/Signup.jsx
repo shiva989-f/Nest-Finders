@@ -73,7 +73,7 @@ const Signup = () => {
     }
   };
 
-  const handlePasswordVisiblity = () => {
+  const handlePasswordVisibility = () => {
     setIsPasswordVisible((prev) => !prev);
   };
 
@@ -205,12 +205,12 @@ const Signup = () => {
                   {isPasswordVisible ? (
                     <EyeClosed
                       className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"
-                      onClick={handlePasswordVisiblity}
+                      onClick={handlePasswordVisibility}
                     />
                   ) : (
                     <Eye
                       className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"
-                      onClick={handlePasswordVisiblity}
+                      onClick={handlePasswordVisibility}
                     />
                   )}
                 </div>

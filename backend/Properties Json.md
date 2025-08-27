@@ -97,7 +97,7 @@
     "images": [],
     "description": "Ideal for office space, centrally located with great connectivity.",
     "plotArea": {
-      "area": 3500,
+      "area": 3Ideal for office space, centrally located with great connectivity.500,
       "areaIn": "sq.ft."
     },
     "furnishedStatus": "Unfurnished",

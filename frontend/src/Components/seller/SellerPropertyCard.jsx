@@ -1,5 +1,5 @@
 import { Heart, MapPin, DollarSign, Eye } from "lucide-react";
-import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const SellerPropertyCard = ({
   propertyId,
@@ -9,10 +9,8 @@ const SellerPropertyCard = ({
   favorites,
   price,
   location,
-  onFavorite,
-  onView,
 }) => {
-  const [isFavorited, setIsFavorited] = useState(false);
+  const navigate = useNavigate();
 
   const truncateDescription = (text, maxWords = 100) => {
     if (!text) return "";
@@ -21,26 +19,8 @@ const SellerPropertyCard = ({
     return words.slice(0, maxWords).join(" ") + "...";
   };
 
-  const formatPrice = (price) => {
-    if (price >= 1000000) {
-      return `$${(price / 1000000).toFixed(1)}M`;
-    } else if (price >= 1000) {
-      return `$${(price / 1000).toFixed(0)}K`;
-    }
-    return `$${price}`;
-  };
-
-  const handleFavorite = () => {
-    setIsFavorited(!isFavorited);
-    if (onFavorite) {
-      onFavorite(propertyId, !isFavorited);
-    }
-  };
-
   const handleView = () => {
-    if (onView) {
-      onView(propertyId);
-    }
+    navigate(`/seller/edit-property/${propertyId}`);
   };
 
   return (
@@ -59,18 +39,6 @@ const SellerPropertyCard = ({
             </div>
           )}
         </div>
-
-        {/* Favorite button */}
-        <button
-          onClick={handleFavorite}
-          className={`absolute top-3 right-3 p-2 rounded-full shadow-lg transition-all duration-200 ${
-            isFavorited
-              ? "bg-red-500 text-white hover:bg-red-600"
-              : "bg-white text-gray-600 hover:bg-gray-50"
-          }`}
-        >
-          <Heart className={`w-5 h-5 ${isFavorited ? "fill-current" : ""}`} />
-        </button>
       </div>
 
       {/* Property Title */}
@@ -89,7 +57,9 @@ const SellerPropertyCard = ({
           <MapPin className="w-5 h-5 text-blue-500" />
           <div className="flex-1">
             <p className="text-sm font-medium text-gray-500">Location</p>
-            <p className="text-sm text-gray-900 truncate">{location}</p>
+            <p className="text-sm text-gray-900 truncate">{location.address}</p>
+            <p className="text-sm text-gray-900 truncate">{location.city}</p>
+            <p className="text-sm text-gray-900 truncate">{location.state}</p>
           </div>
         </div>
 
@@ -97,9 +67,7 @@ const SellerPropertyCard = ({
           <DollarSign className="w-5 h-5 text-green-500" />
           <div className="flex-1">
             <p className="text-sm font-medium text-gray-500">Price</p>
-            <p className="text-lg font-bold text-green-600">
-              {formatPrice(price)}
-            </p>
+            <p className="text-lg font-bold text-green-600">₹{price}</p>
           </div>
         </div>
 
@@ -107,9 +75,7 @@ const SellerPropertyCard = ({
           <Heart className="w-5 h-5 text-red-500" />
           <div className="flex-1">
             <p className="text-sm font-medium text-gray-500">Favorites</p>
-            <p className="text-sm text-gray-900">
-              {favorites} people favorited
-            </p>
+            <p className="text-sm text-gray-900">{favorites} favorites</p>
           </div>
         </div>
       </div>

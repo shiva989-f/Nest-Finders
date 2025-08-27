@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, Outlet } from "react-router-dom";
 import Signup from "./pages/auth/Signup";
 import { ToastContainer } from "react-toastify";
 import OTP from "./pages/auth/OTP";
@@ -11,6 +11,13 @@ import ResetPassword from "./pages/auth/ResetPassword";
 import Admin from "./pages/admin/Admin";
 import PageNotFound from "./pages/PageNotFound";
 import Seller from "./pages/seller/Seller";
+import PropertyListingForm from "./Components/seller/PropertyListingForm";
+import PropertiesTab from "./Components/admin/PropertiesTab";
+import UsersTab from "./Components/admin/UsersTab";
+import ListedPropertiesTab from "./Components/seller/ListedPropertiesTab";
+import PropertyEditingForm from "./Components/seller/PropertyEditingForm";
+import Buyer from "./pages/buyer/Buyer";
+import PropertyDetail from "./pages/buyer/PropertyDetail";
 
 // Protected routes
 const ProtectedRoute = ({ children }) => {
@@ -74,7 +81,7 @@ const App = () => {
   return (
     <div className="font-nunito">
       <Routes>
-        <Route path="/" element={<h1>Home Page</h1>} />
+        <Route path="/" element={<Navigate to={"/properties"} />} />
 
         <Route
           path="/signup"
@@ -119,6 +126,7 @@ const App = () => {
           }
         />
 
+        {/* Admin page parent route */}
         <Route
           path="/admin"
           element={
@@ -126,14 +134,45 @@ const App = () => {
               <Admin />
             </IsUserNotAdmin>
           }
-        />
+        >
+          {/* Children routes for component */}
+          <Route index element={<Navigate to="users" replace />} />
+          {/* Default page */}
+          <Route path="users" element={<UsersTab />} />
+          <Route path="properties" element={<PropertiesTab />} />
+        </Route>
 
+        {/* Parent seller page route */}
         <Route
           path="/seller"
           element={
             <IsUserNotSeller>
               <Seller />
             </IsUserNotSeller>
+          }
+        >
+          {/* Children routes */}
+          <Route index element={<Navigate to="add-property" replace />} />
+          {/* add-property as a default component */}
+          <Route path="add-property" element={<PropertyListingForm />} />
+          <Route path="list-properties" element={<ListedPropertiesTab />} />
+          <Route path="edit-property/:id" element={<PropertyEditingForm />} />
+        </Route>
+
+        <Route
+          path="/properties"
+          element={
+            <ProtectedRoute>
+              <Buyer />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/property/:propertyId"
+          element={
+            <ProtectedRoute>
+              <PropertyDetail />
+            </ProtectedRoute>
           }
         />
 

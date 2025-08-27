@@ -6,7 +6,7 @@ import authRouter from "./routers/AuthRouter.js";
 import { connectDatabase } from "./connections/DB.js";
 import adminRouter from "./routers/AdminRouter.js";
 import sellerRouter from "./routers/SellerRouter.js";
-import userRouter from "./routers/UserRouter.js";
+import buyerRouter from "./routers/BuyerRouter.js";
 
 dotenv.config();
 
@@ -25,7 +25,7 @@ app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
 app.use("/api/auth", authRouter);
 app.use("/api/admin", adminRouter);
 app.use("/api/seller", sellerRouter);
-app.use("/api/user", userRouter);
+app.use("/api/buyer", buyerRouter);
 
 app.listen(PORT, () => {
   console.log(`Server listening at http://localhost:${PORT}`);

@@ -1,18 +1,22 @@
-import { Heart, MapPin, DollarSign, Eye } from "lucide-react";
+import { Heart, MapPin, DollarSign, Eye, EyeIcon } from "lucide-react";
 import { useState } from "react";
-
+import { useNavigate } from "react-router-dom";
+import { useBuyerStore } from "../../Store/BuyerStore";
+import { useEffect } from "react";
 const BuyerPropertyCard = ({
   propertyId,
   image,
   title,
   description,
   favorites,
+  views,
   price,
   location,
-  onFavorite,
-  onView,
 }) => {
-  const [isFavorited, setIsFavorited] = useState(false);
+  const { increasePropertyView, userFav, addToFav, removeFromFav } =
+    useBuyerStore();
+  const [isFavorite, setIsFavorite] = useState(false);
+  const navigate = useNavigate();
 
   const truncateDescription = (text, maxWords = 100) => {
     if (!text) return "";
@@ -21,27 +25,33 @@ const BuyerPropertyCard = ({
     return words.slice(0, maxWords).join(" ") + "...";
   };
 
-  const formatPrice = (price) => {
-    if (price >= 1000000) {
-      return `$${(price / 1000000).toFixed(1)}M`;
-    } else if (price >= 1000) {
-      return `$${(price / 1000).toFixed(0)}K`;
-    }
-    return `$${price}`;
-  };
-
   const handleFavorite = () => {
-    setIsFavorited(!isFavorited);
-    if (onFavorite) {
-      onFavorite(propertyId, !isFavorited);
+    if (isFavorite) {
+      removeFromFav(propertyId);
+      setIsFavorite(false);
+    } else {
+      addToFav(propertyId);
+      setIsFavorite(true);
     }
   };
 
   const handleView = () => {
-    if (onView) {
-      onView(propertyId);
+    if (!propertyId) {
+      navigate("/");
     }
+    increasePropertyView(propertyId); // Increase the view of the property
+    navigate(`/property/${propertyId}`);
   };
+
+  useEffect(() => {
+    if (Array.isArray(userFav)) {
+      // Return true if any element of userFav matches the condition inside the some function
+      const isFav = userFav.some((property) => propertyId === property._id);
+      if (isFav) {
+        setIsFavorite(true);
+      }
+    }
+  }, [userFav, propertyId]);
 
   return (
     <div className="relative group bg-gradient-to-br from-white via-white to-gray-50 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 p-6 m-2 border border-gray-100 hover:border-gray-200 transform hover:-translate-y-1">
@@ -64,12 +74,12 @@ const BuyerPropertyCard = ({
         <button
           onClick={handleFavorite}
           className={`absolute top-3 right-3 p-2 rounded-full shadow-lg transition-all duration-200 ${
-            isFavorited
+            isFavorite
               ? "bg-red-500 text-white hover:bg-red-600"
               : "bg-white text-gray-600 hover:bg-gray-50"
           }`}
         >
-          <Heart className={`w-5 h-5 ${isFavorited ? "fill-current" : ""}`} />
+          <Heart className={`w-5 h-5 ${isFavorite ? "fill-current" : ""}`} />
         </button>
       </div>
 
@@ -89,7 +99,9 @@ const BuyerPropertyCard = ({
           <MapPin className="w-5 h-5 text-blue-500" />
           <div className="flex-1">
             <p className="text-sm font-medium text-gray-500">Location</p>
-            <p className="text-sm text-gray-900 truncate">{location}</p>
+            <p className="text-sm text-gray-900 truncate">{location.address}</p>
+            <p className="text-sm text-gray-900 truncate">{location.city}</p>
+            <p className="text-sm text-gray-900 truncate">{location.state}</p>
           </div>
         </div>
 
@@ -97,19 +109,25 @@ const BuyerPropertyCard = ({
           <DollarSign className="w-5 h-5 text-green-500" />
           <div className="flex-1">
             <p className="text-sm font-medium text-gray-500">Price</p>
-            <p className="text-lg font-bold text-green-600">
-              {formatPrice(price)}
-            </p>
+            <p className="text-lg font-bold text-green-600">₹{price}</p>
           </div>
         </div>
 
-        <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors duration-200">
-          <Heart className="w-5 h-5 text-red-500" />
-          <div className="flex-1">
-            <p className="text-sm font-medium text-gray-500">Favorites</p>
-            <p className="text-sm text-gray-900">
-              {favorites} people favorited
-            </p>
+        <div className="flex justify-between items-center bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors duration-200">
+          <div className="flex items-center gap-3 p-3 ">
+            <Heart className="w-5 h-5 text-red-500" />
+            <div className="flex-1">
+              <p className="text-sm font-medium text-gray-500">Favorites</p>
+              <p className="text-sm text-gray-900">{favorites} Favorite</p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3 p-3">
+            <EyeIcon className="w-5 h-5 text-yellow-500" />
+            <div className="flex-1">
+              <p className="text-sm font-medium text-gray-500">Views</p>
+              <p className="text-sm text-gray-900">{views} Views</p>
+            </div>
           </div>
         </div>
       </div>

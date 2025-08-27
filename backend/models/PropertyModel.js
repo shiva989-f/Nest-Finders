@@ -87,7 +87,7 @@ const PropertySchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    favourites: {
+    favorites: {
       type: Number,
       default: 0,
     },

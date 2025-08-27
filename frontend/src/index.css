@@ -17,12 +17,12 @@ img {
 /* Note: To use google fonts add import in the top of file and add font name in theme block this is new method for custom below is method used */
 @font-face {
   font-family: nunito;
-  src: url(../public/fonts/nunito.TTF);
+  src: url(/fonts/nunito.TTF);
 }
 
 @font-face {
   font-family: nunito-bold;
-  src: url(../public/fonts/nunito_bold.TTF);
+  src: url(/fonts/nunito_bold.TTF);
 }
 
 @theme {

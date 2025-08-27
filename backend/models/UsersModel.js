@@ -32,7 +32,7 @@ const UserSchema = new mongoose.Schema(
       required: true,
       default: false,
     },
-    favourites: [{ type: mongoose.Schema.Types.ObjectId }],
+    favorites: [{ type: mongoose.Schema.Types.ObjectId }],
 
     resetPasswordToken: String,
     resetPasswordExpiresAt: Date,

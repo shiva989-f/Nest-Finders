@@ -13,44 +13,70 @@ import {
   Upload,
   X,
   Plus,
+  LoaderIcon,
+  Trash2,
+  Loader,
 } from "lucide-react";
 import { useSellerStore } from "../../Store/SellerStore";
+import { useNavigate, useParams } from "react-router-dom";
+import { useEffect } from "react";
+import { errorMessage } from "../../Utils/HandleToast";
+import DeleteButton from "../DeleteButton";
 
-const PropertyListingForm = () => {
+const PropertyEditingForm = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const { getProperty, editProperty, deleteProperty, property, isLoading } =
+    useSellerStore();
+
+  useEffect(() => {
+    if (!id) {
+      errorMessage("Invalid url!");
+      return;
+    }
+    getProperty(id);
+  }, [id, getProperty]);
+
+  // Set initial state for form data after fetching property details
+  useEffect(() => {
+    if (property) {
+      setFormData({
+        title: property.title || "",
+        price: property.price || "",
+        location: {
+          address: property.location?.address || "",
+          city: property.location?.city || "",
+          state: property.location?.state || "",
+          country: property.location?.country || "",
+          pinCode: property.location?.pinCode || "",
+          coordinates: {
+            latitude: property.location?.coordinates?.latitude || "",
+            longitude: property.location?.coordinates?.longitude || "",
+          },
+        },
+        images: property.images || [],
+        description: property.description || "",
+        plotArea: {
+          area: property.plotArea?.area || "",
+          areaIn: property.plotArea?.areaIn || areaUnits[0],
+        },
+        numberOfBedrooms: property.numberOfBedrooms || 0,
+        numberOfBathrooms: property.numberOfBathrooms || 0,
+        numberOfBalconies: property.numberOfBalconies || 0,
+        furnishedStatus: property.furnishedStatus || "",
+        totalFloors: property.totalFloors || "",
+        propertyType: property.propertyType || "",
+        status: property.status || "",
+        propertyOwner: {
+          name: property.propertyOwner?.name || "",
+          email: property.propertyOwner?.email || "",
+          contactNo: property.propertyOwner?.contactNo || "",
+        },
+      });
+    }
+  }, [property]);
+
   const [currentStep, setCurrentStep] = useState(1);
-  const initialState = {
-    title: "",
-    price: "",
-    location: {
-      address: "",
-      city: "",
-      state: "",
-      country: "",
-      pinCode: "",
-      coordinates: {
-        latitude: "",
-        longitude: "",
-      },
-    },
-    images: [],
-    description: "",
-    plotArea: {
-      area: "",
-      areaIn: "sq.ft.",
-    },
-    numberOfBedrooms: "",
-    numberOfBathrooms: "",
-    numberOfBalconies: "",
-    furnishedStatus: "",
-    totalFloors: "",
-    propertyType: "",
-    status: "",
-    propertyOwner: {
-      name: "",
-      email: "",
-      contactNo: "",
-    },
-  };
   const [formData, setFormData] = useState({
     title: "",
     price: "",
@@ -69,7 +95,7 @@ const PropertyListingForm = () => {
     description: "",
     plotArea: {
       area: "",
-      areaIn: "sq.ft.",
+      areaIn: "",
     },
     numberOfBedrooms: "",
     numberOfBathrooms: "",
@@ -91,8 +117,6 @@ const PropertyListingForm = () => {
   const furnishedOptions = ["Furnished", "Semi-Furnished", "Unfurnished"];
   const statusOptions = ["For Sale", "For Rent", "Under Construction"];
   const areaUnits = ["sq.ft.", "sq.m", "acres", "hectares"];
-
-  const { addProperty, isLoading } = useSellerStore();
 
   const validateStep = (step) => {
     const newErrors = {};
@@ -244,12 +268,17 @@ const PropertyListingForm = () => {
       for (const [key, value] of propertyFormData.entries()) {
         console.log(key, value);
       }
-      console.log("Form submitted.");
-      const result = await addProperty(propertyFormData);
-      if (result.success) {
-        setFormData(initialState);
-        setCurrentStep(1);
+      const response = await editProperty(id, propertyFormData);
+      if (response.data.success) {
+        navigate("/seller/list-properties");
       }
+    }
+  };
+
+  const handleDelete = async (propertyId) => {
+    const response = await deleteProperty(propertyId);
+    if (response.data.success) {
+      navigate("/seller/list-properties");
     }
   };
 
@@ -693,7 +722,7 @@ const PropertyListingForm = () => {
             {formData.images.map((image, index) => (
               <div key={image.public_id} className="relative">
                 <img
-                  src={image.previewUrl}
+                  src={image.previewUrl || image.imageUrl}
                   alt={`Property ${index + 1}`}
                   className="w-full h-24 object-cover rounded-lg"
                 />
@@ -860,20 +889,35 @@ const PropertyListingForm = () => {
 
             {/* Navigation Buttons */}
             <div className="flex justify-between mt-8 pt-6 border-t">
-              {/* Previous Button */}
-              <button
-                type="button"
-                onClick={prevStep}
-                disabled={currentStep === 1}
-                className={`flex items-center px-6 py-3 rounded-lg font-medium transition-all ${
-                  currentStep === 1
-                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                }`}
-              >
-                <ChevronLeft className="w-5 h-5 mr-2" />
-                Previous
-              </button>
+              {currentStep === 1 ? (
+                <button
+                  className="bg-gradient-to-r from-red-500 via-red-600 to-red-700 text-white py-3 px-6 rounded-xl font-semibold hover:from-red-600 hover:via-red-700 hover:to-red-800 transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 group/btn relative overflow-hidden"
+                  onClick={() => handleDelete(id)}
+                >
+                  {isLoading ? (
+                    <Loader className="w-5 h-5 group-hover/btn:animate-pulse" />
+                  ) : (
+                    <Trash2 className="w-5 h-5 group-hover/btn:animate-pulse" />
+                  )}
+                  <span>Delete</span>
+                  {/* Button shine effect */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover/btn:translate-x-full transition-transform duration-700 rounded-xl" />
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={prevStep}
+                  disabled={currentStep === 1}
+                  className={`flex items-center px-6 py-3 rounded-lg font-medium transition-all ${
+                    currentStep === 1
+                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                      : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                  }`}
+                >
+                  <ChevronLeft className="w-5 h-5 mr-2" />
+                  Previous
+                </button>
+              )}
               {currentStep < 4 ? (
                 <button
                   type="button"
@@ -886,8 +930,8 @@ const PropertyListingForm = () => {
               ) : (
                 <button
                   type="button"
-                  onClick={handleSubmit}
                   disabled={isLoading}
+                  onClick={handleSubmit}
                   className="flex items-center px-8 py-3 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-all shadow-lg hover:shadow-xl disabled:bg-green-300 disabled:cursor-not-allowed"
                 >
                   {isLoading ? (
@@ -906,4 +950,4 @@ const PropertyListingForm = () => {
   );
 };
 
-export default PropertyListingForm;
+export default PropertyEditingForm;

@@ -9,11 +9,9 @@ import {
   Shield,
   ChevronDown,
 } from "lucide-react";
-import UsersTab from "../../Components/admin/UsersTab";
 import { useAuthStore } from "../../Store/authStore";
 import { useAdminStore } from "../../Store/AdminStore";
-import { useNavigate } from "react-router-dom";
-import PropertiesTab from "../../Components/admin/PropertiesTab";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 
 const Admin = () => {
   const { user, logout } = useAuthStore();
@@ -23,6 +21,7 @@ const Admin = () => {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const { users, properties } = useAdminStore();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const tabs = [
     {
@@ -31,6 +30,7 @@ const Admin = () => {
       icon: Users,
       count: users.length,
       color: "from-blue-500 to-blue-600",
+      path: "/admin/users",
     },
     {
       id: "properties",
@@ -38,6 +38,7 @@ const Admin = () => {
       icon: Home,
       count: properties.length,
       color: "from-purple-500 to-purple-600",
+      path: "/admin/properties",
     },
   ];
 
@@ -57,8 +58,8 @@ const Admin = () => {
     },
   ];
 
-  const handleLogout = () => {
-    const response = logout();
+  const handleLogout = async () => {
+    const response = await logout();
     if (response.data.success) {
       setTimeout(() => {
         navigate("/login");
@@ -68,13 +69,21 @@ const Admin = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-purple-50 relative overflow-hidden">
+      {/* Overlay for mobile sidebar - only covers the right side */}
+      {sidebarOpen && (
+        <div
+          className="fixed top-0 left-64 right-0 bottom-0 bg-black/30 z-40 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       {/* Main container */}
       <div className="relative z-10 flex h-screen">
         {/* Sidebar - hidden on mobile, can be toggled */}
         <div
           className={`${
             sidebarOpen ? "translate-x-0" : "-translate-x-full"
-          } lg:translate-x-0 fixed lg:static inset-y-0 left-0 z-50 w-64 bg-white/90 backdrop-blur-xl shadow-xl transition-transform duration-300 ease-in-out`}
+          } lg:translate-x-0 fixed lg:static inset-y-0 left-0 z-50 w-64 bg-white backdrop-blur-xl shadow-xl transition-transform duration-300 ease-in-out`}
         >
           <div className="flex flex-col h-full">
             {/* Sidebar header */}
@@ -100,11 +109,11 @@ const Admin = () => {
                   key={tab.id}
                   onClick={() => {
                     setIsUserTabSelected(tab.id === "users");
+                    navigate(tab.path);
                     setSidebarOpen(false);
                   }}
                   className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all duration-200 group ${
-                    (tab.id === "users" && isUserTabSelected) ||
-                    (tab.id === "properties" && !isUserTabSelected)
+                    location.pathname.startsWith(tab.path)
                       ? `bg-gradient-to-r ${tab.color} text-white shadow-lg`
                       : "hover:bg-gray-100 text-gray-700 hover:text-gray-900"
                   }`}
@@ -114,8 +123,7 @@ const Admin = () => {
                   <div className="ml-auto">
                     <span
                       className={`text-xs px-2 py-1 rounded-full ${
-                        (tab.id === "users" && isUserTabSelected) ||
-                        (tab.id === "properties" && !isUserTabSelected)
+                        location.pathname.startsWith(tab.path)
                           ? "bg-white/20 text-white"
                           : "bg-gray-200 text-gray-600 group-hover:bg-gray-300"
                       }`}
@@ -147,7 +155,7 @@ const Admin = () => {
         {/* Main content */}
         <div className="flex-1 flex flex-col overflow-hidden">
           {/* Top navigation */}
-          <header className="bg-white/90 backdrop-blur-xl shadow-sm border-b border-gray-200 z-100">
+          <header className="bg-white/90 backdrop-blur-xl shadow-sm border-b border-gray-200 z-30 relative">
             <div className="flex items-center justify-between p-4 lg:p-6">
               <div className="flex items-center gap-4">
                 <button
@@ -158,10 +166,10 @@ const Admin = () => {
                 </button>
 
                 <div>
-                  <h1 className="text-2xl font-nunito-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+                  <h1 className="text-xl lg:text-2xl font-nunito-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
                     Welcome back, {user.username}
                   </h1>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-xs lg:text-sm text-gray-500">
                     {new Date().toLocaleDateString("en-US", {
                       weekday: "long",
                       year: "numeric",
@@ -172,19 +180,19 @@ const Admin = () => {
                 </div>
               </div>
 
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 lg:gap-3">
                 {/* Notifications */}
                 <div className="relative">
                   <button
                     onClick={() => setShowNotifications(!showNotifications)}
                     className="relative p-2 hover:bg-gray-100 rounded-lg transition-colors"
                   >
-                    <Bell className="w-5 h-5 text-gray-600" />
-                    <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></span>
+                    <Bell className="w-4 h-4 lg:w-5 lg:h-5 text-gray-600" />
+                    <span className="absolute -top-1 -right-1 w-2 h-2 lg:w-3 lg:h-3 bg-red-500 rounded-full"></span>
                   </button>
 
                   {showNotifications && (
-                    <div className="absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-xl border border-gray-200 z-50">
+                    <div className="absolute right-0 mt-2 w-72 lg:w-80 bg-white rounded-xl shadow-xl border border-gray-200 z-50">
                       <div className="p-4 border-b border-gray-100">
                         <h3 className="font-semibold text-gray-800">
                           Notifications
@@ -213,18 +221,18 @@ const Admin = () => {
                 <div className="relative">
                   <button
                     onClick={() => setShowUserMenu(!showUserMenu)}
-                    className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                    className="flex items-center gap-1 lg:gap-2 p-1 lg:p-2 hover:bg-gray-100 rounded-lg transition-colors"
                   >
                     <img
                       src={user.profilePicUrl}
                       alt="Profile"
-                      className="w-8 h-8 rounded-full border-2 border-gray-200"
+                      className="w-6 h-6 lg:w-8 lg:h-8 rounded-full border-2 border-gray-200"
                     />
-                    <ChevronDown className="w-4 h-4 text-gray-600" />
+                    <ChevronDown className="w-3 h-3 lg:w-4 lg:h-4 text-gray-600" />
                   </button>
 
                   {showUserMenu && (
-                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-gray-200 z-1000">
+                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-gray-200 z-50">
                       <div className="p-2">
                         {/* Profile button is dummy button */}
                         <button className="w-full flex items-center gap-3 p-2 hover:bg-gray-100 rounded-lg transition-colors text-left">
@@ -250,7 +258,7 @@ const Admin = () => {
           <main className="flex-1 overflow-auto">
             {/* Tab content */}
             <div className="p-4 lg:p-6">
-              {isUserTabSelected ? <UsersTab /> : <PropertiesTab />}
+              <Outlet />
             </div>
           </main>
         </div>

@@ -1,6 +1,6 @@
 import joi from "joi";
 
-export const propertyValidaiton = (req, res, next) => {
+export const propertyValidation = (req, res, next) => {
   const schema = joi.object({
     title: joi.string().required(),
     price: joi.number().required(),
@@ -58,7 +58,7 @@ export const propertyValidaiton = (req, res, next) => {
       contactNo: joi
         .string()
         .pattern(/^\d{10}$/)
-        .messages({messages: "Contact number must be a 10-digit number"})
+        .messages({ messages: "Contact number must be a 10-digit number" })
         .required(),
     }),
     views: joi.number().optional().default(0),
@@ -66,7 +66,7 @@ export const propertyValidaiton = (req, res, next) => {
 
     listedBy: joi.string().required(),
   });
-  const {error} = schema.validate(req.body);
+  const { error } = schema.validate(req.body);
   if (error) {
     const message = error?.details[0]?.message || "Fields are not valid";
     return res.status(400).json({ message, error });

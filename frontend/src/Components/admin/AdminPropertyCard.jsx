@@ -1,4 +1,5 @@
 import { Heart, MapPin, IndianRupee, Eye, Trash2 } from "lucide-react";
+import DeleteButton from "../DeleteButton";
 
 const AdminPropertyCard = ({
   propertyId,
@@ -85,24 +86,14 @@ const AdminPropertyCard = ({
           <Heart className="w-5 h-5 text-red-500" />
           <div className="flex-1">
             <p className="text-sm font-medium text-gray-500">Favorites</p>
-            <p className="text-sm text-gray-900">
-              {favorites} people favorited
-            </p>
+            <p className="text-sm text-gray-900">{favorites} favorite</p>
           </div>
         </div>
       </div>
 
       {/* Action button */}
-      <button
-        className="w-full bg-gradient-to-r from-red-500 via-red-600 to-red-700 text-white py-3 px-6 rounded-xl font-semibold hover:from-red-600 hover:via-red-700 hover:to-red-800 transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 group/btn relative overflow-hidden"
-        onClick={handleDelete}
-      >
-        <Trash2 className="w-5 h-5 group-hover/btn:animate-pulse" />
-        <span>Delete Property</span>
 
-        {/* Button shine effect */}
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover/btn:translate-x-full transition-transform duration-700 rounded-xl" />
-      </button>
+      <DeleteButton handleClick={handleDelete} isLoading={isLoading} />
     </div>
   );
 };

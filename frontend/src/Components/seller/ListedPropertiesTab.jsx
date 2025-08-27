@@ -1,23 +1,21 @@
 import { useEffect, useState } from "react";
-import { useAdminStore } from "../../Store/AdminStore";
 import { Filter, House, RefreshCw, Search } from "lucide-react";
-import AdminPropertyCard from "./AdminPropertyCard";
+import { useSellerStore } from "../../Store/SellerStore";
+import SellerPropertyCard from "./SellerPropertyCard";
 
-const PropertiesTab = () => {
-  const { fetchProperties, properties, deleteProperty, isLoading } =
-    useAdminStore();
+const ListedPropertiesTab = () => {
+  const { fetchListedProperties, properties, isLoading } = useSellerStore();
   const [searchTerm, setSearchTerm] = useState("");
   const [filterFurnishedStatus, setFilterFurnishedStatus] = useState("all"); //("Furnished", "Semi-Furnished", "Unfurnished")
   const [filterType, setFilterType] = useState("all"); // ("Apartment", "House", "Villa", "Plot", "Commercial")
   const [isRefreshing, setIsRefreshing] = useState(false);
-  
   useEffect(() => {
-    fetchProperties();
+    fetchListedProperties();
   }, []);
 
   const handleRefresh = async () => {
     setIsRefreshing(true);
-    await fetchProperties();
+    await fetchListedProperties();
     setIsRefreshing(false);
   };
 
@@ -207,15 +205,16 @@ const PropertiesTab = () => {
                   animationFillMode: "forwards",
                 }}
               >
-                <AdminPropertyCard
+                <SellerPropertyCard
                   propertyId={property._id}
-                  image={property.images[0]?.imageUrl || "/images/placeholder.jpg"}
+                  image={
+                    property.images[0]?.imageUrl || "/images/placeholder.jpg"
+                  }
                   title={property.title}
                   description={property.description}
                   price={property.price}
                   location={property.location}
                   favorites={property.favorites}
-                  onDelete={deleteProperty}
                   isLoading
                 />
               </div>
@@ -246,4 +245,4 @@ const PropertiesTab = () => {
   );
 };
 
-export default PropertiesTab;
+export default ListedPropertiesTab;
