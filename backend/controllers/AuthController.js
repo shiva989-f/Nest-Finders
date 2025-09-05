@@ -127,8 +127,6 @@ export const verifyEmail = async (req, res) => {
 
 // Login Function http://localhost:3000/api/auth/login
 export const login = async (req, res) => {
-  console.log("Login attempt:", req.body);
-
   try {
     const { email, password } = req.body;
     if (!email || !password) {
