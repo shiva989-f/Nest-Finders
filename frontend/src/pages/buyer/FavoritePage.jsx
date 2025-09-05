@@ -13,10 +13,9 @@ import { useBuyerStore } from "../../Store/BuyerStore";
 import BuyerPropertyCard from "../../Components/buyer/BuyerPropertyCard";
 import { useNavigate } from "react-router-dom";
 
-const Buyer = () => {
+const FavoritePage = () => {
   const { user, logout } = useAuthStore();
-  const { fetchAllProperties, fetchUserFav, properties, isLoading } =
-    useBuyerStore();
+  const { fetchUserFav, userFav, isLoading } = useBuyerStore();
   const navigate = useNavigate();
   const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
@@ -43,7 +42,6 @@ const Buyer = () => {
   ];
 
   useEffect(() => {
-    fetchAllProperties();
     fetchUserFav();
   }, []);
 
@@ -56,20 +54,28 @@ const Buyer = () => {
     }
   };
 
-  const filteredProperties = Array.isArray(properties)
-    ? properties.filter((property) => {
+  const filteredProperties = Array.isArray(userFav)
+    ? userFav.filter((property) => {
         const matchesSearch =
-          property.title.toLowerCase().includes(searchTerm) ||
-          property.location.address.toLowerCase().includes(searchTerm) ||
-          property.location.city.toLowerCase().includes(searchTerm) ||
-          property.location.state.toLowerCase().includes(searchTerm) ||
-          property.description.toLowerCase().includes(searchTerm);
+          (property?.title?.toLowerCase() || "").includes(searchTerm) ||
+          (property?.location?.address?.toLowerCase() || "").includes(
+            searchTerm
+          ) ||
+          (property?.location?.city?.toLowerCase() || "").includes(
+            searchTerm
+          ) ||
+          (property?.location?.state?.toLowerCase() || "").includes(
+            searchTerm
+          ) ||
+          (property?.description?.toLowerCase() || "").includes(searchTerm);
 
         const matchesFurnishedStatus =
           filterFurnishedStatus === "all" ||
-          property.furnishedStatus === filterFurnishedStatus;
+          property?.furnishedStatus === filterFurnishedStatus;
+
         const matchesFilterType =
-          filterType === "all" || property.propertyType === filterType;
+          filterType === "all" || property?.propertyType === filterType;
+
         return matchesSearch && matchesFurnishedStatus && matchesFilterType;
       })
     : [];
@@ -202,6 +208,7 @@ const Buyer = () => {
               {showUserMenu && (
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-gray-200 z-50">
                   <div className="p-2">
+                    {/* Profile button is dummy button */}
                     <button
                       className="w-full flex items-center gap-3 p-2 hover:bg-gray-100 rounded-lg transition-colors text-left"
                       onClick={() => navigate("/profile")}
@@ -285,7 +292,7 @@ const Buyer = () => {
             <div className="flex items-center gap-2 px-4 py-2 bg-white/60 backdrop-blur-sm rounded-lg border border-purple-100">
               <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
               <span className="text-sm font-medium text-gray-700">
-                Total: {Array.isArray(properties) ? properties.length : 0}
+                Total: {Array.isArray(userFav) ? userFav.length : 0}
               </span>
             </div>
             <div className="flex items-center gap-2 px-4 py-2 bg-white/60 backdrop-blur-sm rounded-lg border border-purple-100">
@@ -318,7 +325,8 @@ const Buyer = () => {
                   <BuyerPropertyCard
                     propertyId={property._id}
                     image={
-                      property.images[0]?.imageUrl || "/images/placeholder.jpg"
+                      property.images?.[0]?.imageUrl ||
+                      "/images/placeholder.jpg"
                     }
                     images={property.images}
                     title={property.title}
@@ -358,4 +366,4 @@ const Buyer = () => {
   );
 };
 
-export default Buyer;
+export default FavoritePage;

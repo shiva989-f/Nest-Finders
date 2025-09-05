@@ -60,7 +60,7 @@ const Admin = () => {
 
   const handleLogout = async () => {
     const response = await logout();
-    if (response.data.success) {
+    if (response?.data?.success) {
       setTimeout(() => {
         navigate("/login");
       }, 200);
@@ -235,7 +235,10 @@ const Admin = () => {
                     <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-gray-200 z-50">
                       <div className="p-2">
                         {/* Profile button is dummy button */}
-                        <button className="w-full flex items-center gap-3 p-2 hover:bg-gray-100 rounded-lg transition-colors text-left">
+                        <button
+                          className="w-full flex items-center gap-3 p-2 hover:bg-gray-100 rounded-lg transition-colors text-left"
+                          onClick={() => navigate("/profile")}
+                        >
                           <Crown className="w-4 h-4 text-gray-500" />
                           <span className="text-sm text-gray-700">Profile</span>
                         </button>

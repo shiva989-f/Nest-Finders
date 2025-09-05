@@ -240,11 +240,11 @@ const PropertyListingForm = () => {
       const { images, ...otherData } = formData;
       appendFormData(otherData);
 
-      // Debug: log all entries
+      /* // Debug: log all entries
       for (const [key, value] of propertyFormData.entries()) {
         console.log(key, value);
       }
-      console.log("Form submitted.");
+      console.log("Form submitted."); */
       const result = await addProperty(propertyFormData);
       if (result.success) {
         setFormData(initialState);

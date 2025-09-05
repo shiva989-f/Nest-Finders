@@ -16,7 +16,7 @@ export const sendVerificationEmail = (email, otp) => {
     // transporter is mail configuration imported from nodemailer.config.js
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
-        console.error("Error sending verification mail:", error.message);
+        console.error("Error sending verification mail:", error.message)
         return; // Prevents further execution
       } else {
         console.log("Email sent:", info.response);

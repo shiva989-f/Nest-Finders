@@ -102,7 +102,7 @@ export const useAuthStore = create((set) => ({
     set({ isLoading: true });
     try {
       const response = await axios.get(`${API_URL}/auth/logout`);
-      set({ isLoading: false });
+      set({ isLoading: false, isAuthenticated: false, user: null });
       successMessage("Logged out");
       return response;
     } catch (error) {

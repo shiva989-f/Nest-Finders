@@ -264,10 +264,10 @@ const PropertyEditingForm = () => {
       const { images, ...otherData } = formData;
       appendFormData(otherData);
 
-      // Debug: log all entries
+      /* // Debug: log all entries
       for (const [key, value] of propertyFormData.entries()) {
         console.log(key, value);
-      }
+      } */
       const response = await editProperty(id, propertyFormData);
       if (response.data.success) {
         navigate("/seller/list-properties");

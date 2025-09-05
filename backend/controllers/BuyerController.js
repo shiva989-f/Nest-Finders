@@ -129,10 +129,15 @@ export const addToFavorites = async (req, res) => {
     // Increment favorite count in property
     await Property.findByIdAndUpdate(propertyId, { $inc: { favorites: 1 } });
 
+    // Find all the data from the id stored in favorites and return it
+    const favProperties = await Property.find({
+      _id: { $in: userInfo.favorites }, // Populate properties based on favorites
+    });
+
     res.status(200).json({
       success: true,
       message: "Property added to favorites!",
-      favProperties: updatedUser.favorites,
+      favProperties,
       action: "added",
     });
   } catch (error) {
@@ -200,22 +205,26 @@ export const removeFromFavorites = async (req, res) => {
         propertyId,
         { $inc: { favorites: -1 } },
         { new: true }
-      ).where("favorites")
+      )
+        .where("favorites")
         .gt(0); // prevents decrement if already 0
+
+      // Find all the data from the id stored in favorites and return it
+      const favProperties = await Property.find({
+        _id: { $in: updatedUser.favorites }, // Populate properties based on favorites
+      });
 
       return res.status(200).json({
         success: true,
         message: "Property removed from favorites!",
-        favProperties: updatedUser.favorites,
+        favProperties,
       });
-    }
-    else {
+    } else {
       return res.status(400).json({
         success: false,
         message: "Property is not in favorites!",
       });
     }
-
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -252,6 +261,7 @@ export const showAllFavorites = async (req, res) => {
       });
     }
 
+    // Find all the data from the id stored in favorites and return it
     const favProperties = await Property.find({
       _id: { $in: userInfo.favorites }, // Populate properties based on favorites
     });
@@ -262,7 +272,6 @@ export const showAllFavorites = async (req, res) => {
       favProperties,
     });
   } catch (error) {
-    console.error("Error fetching favorites:", error);
     res.status(500).json({
       success: false,
       message: "Something went wrong while fetching favorites!",
@@ -291,8 +300,6 @@ export const getProperty = async (req, res) => {
       .status(200)
       .json({ success: true, message: "All properties fetched!", property });
   } catch (error) {
-    console.log(error);
-
     res.status(500).json({ success: false, message: "Something went wrong!" });
   }
 };

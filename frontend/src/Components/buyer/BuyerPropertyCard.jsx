@@ -99,9 +99,11 @@ const BuyerPropertyCard = ({
           <MapPin className="w-5 h-5 text-blue-500" />
           <div className="flex-1">
             <p className="text-sm font-medium text-gray-500">Location</p>
-            <p className="text-sm text-gray-900 truncate">{location.address}</p>
-            <p className="text-sm text-gray-900 truncate">{location.city}</p>
-            <p className="text-sm text-gray-900 truncate">{location.state}</p>
+            <p className="text-sm text-gray-900 truncate">
+              {location?.address}
+            </p>
+            <p className="text-sm text-gray-900 truncate">{location?.city}</p>
+            <p className="text-sm text-gray-900 truncate">{location?.state}</p>
           </div>
         </div>
 

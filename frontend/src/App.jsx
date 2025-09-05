@@ -18,6 +18,8 @@ import ListedPropertiesTab from "./Components/seller/ListedPropertiesTab";
 import PropertyEditingForm from "./Components/seller/PropertyEditingForm";
 import Buyer from "./pages/buyer/Buyer";
 import PropertyDetail from "./pages/buyer/PropertyDetail";
+import FavoritePage from "./pages/buyer/FavoritePage";
+import ProfilePage from "./pages/auth/ProfilePage";
 
 // Protected routes
 const ProtectedRoute = ({ children }) => {
@@ -126,6 +128,16 @@ const App = () => {
           }
         />
 
+        
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <ProfilePage />
+            </ProtectedRoute>
+          }
+        />
+
         {/* Admin page parent route */}
         <Route
           path="/admin"
@@ -159,6 +171,7 @@ const App = () => {
           <Route path="edit-property/:id" element={<PropertyEditingForm />} />
         </Route>
 
+        {/* Buyer or user routes */}
         <Route
           path="/properties"
           element={
@@ -172,6 +185,15 @@ const App = () => {
           element={
             <ProtectedRoute>
               <PropertyDetail />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/favorite"
+          element={
+            <ProtectedRoute>
+              <FavoritePage />
             </ProtectedRoute>
           }
         />

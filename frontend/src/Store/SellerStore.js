@@ -51,7 +51,6 @@ export const useSellerStore = create((set) => ({
       );
       set({ isLoading: false, property: response.data.property });
     } catch (error) {
-      console.log(error);
       errorMessage("Unknown error occurred.");
       set({ isLoading: false });
     }
@@ -85,7 +84,6 @@ export const useSellerStore = create((set) => ({
       const response = await axios.get(
         `${API_URL}/seller/delete-property/${propertyId}`
       );
-      console.log(response);
       set({ isLoading: false });
       if (response.data.success) {
         successMessage(response.data.message);
@@ -94,7 +92,6 @@ export const useSellerStore = create((set) => ({
       }
       return response;
     } catch (error) {
-      console.log(error);
       errorMessage("Unknown error occurred.");
       set({ isLoading: false });
     }

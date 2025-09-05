@@ -96,8 +96,6 @@ export const getProperty = async (req, res) => {
       .status(200)
       .json({ success: true, message: "All properties fetched!", property });
   } catch (error) {
-    console.log(error);
-
     res.status(500).json({ success: false, message: "Something went wrong!" });
   }
 };
@@ -182,8 +180,6 @@ export const deleteProperty = async (req, res) => {
       .status(200)
       .json({ success: true, message: "Property deleted from the list!" });
   } catch (error) {
-    console.log(error);
-
     res.status(500).json({ success: false, message: "Something went wrong!" });
   }
 };
