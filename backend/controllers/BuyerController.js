@@ -16,6 +16,8 @@ export const showProperties = async (req, res) => {
         .status(404)
         .json({ success: false, message: "No property is listed!" });
 
+    console.log(properties);
+
     res.status(200).json({
       success: true,
       message: "All properties data is fetched!",
